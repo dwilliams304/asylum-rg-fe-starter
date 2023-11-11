@@ -109,7 +109,7 @@ function RenderLandingPage(props) {
             <div className="second-data-point-container">
               <h2>5%</h2>
               <h3>
-                The New York asylum office grant rate dropped to 5 percennt in
+                The New York asylum office grant rate dropped to 5 percent in
                 fiscal year 2020.
               </h3>
             </div>
