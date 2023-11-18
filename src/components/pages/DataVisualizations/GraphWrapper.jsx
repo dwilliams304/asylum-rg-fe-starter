@@ -10,7 +10,6 @@ import YearLimitsSelect from './YearLimitsSelect';
 import ViewSelect from './ViewSelect';
 import axios from 'axios';
 import { resetVisualizationQuery } from '../../../state/actionCreators';
-import test_data from '../../../data/test_data.json';
 import { colors } from '../../../styles/data_vis_colors';
 import ScrollToTopOnMount from '../../../utils/scrollToTopOnMount';
 
@@ -50,6 +49,7 @@ function GraphWrapper(props) {
         break;
     }
   }
+
   function updateStateWithNewData(years, view, office, stateSettingCallback) {
     /*
           _                                                                             _
@@ -61,51 +61,59 @@ function GraphWrapper(props) {
         |     so in axios we will say:                                                    |
         |                                                                                 |     
         |       axios.get(`${url}/summary`, {                                             |
-        |         params: {                                                               |
-        |           from: <year_start>,                                                   |
-        |           to: <year_end>,                                                       |
+          |         params: {                                                               |
+            |           from: <year_start>,                                                   |
+            |           to: <year_end>,                                                       |
         |           office: <office>,       [ <-- this one is optional! when    ]         |
         |         },                        [ querying by `all offices` there's ]         |
         |       })                          [ no `office` param in the query    ]         |
         |                                                                                 |
           _                                                                             _
                                    -- Mack 
-    
-    */
-
-    if (office === 'all' || !office) {
-      axios
-        .get(process.env.REACT_APP_API_URI, {
-          // mock URL, can be simply replaced by `${Real_Production_URL}/summary` in prod!
-          params: {
-            from: years[0],
-            to: years[1],
-          },
-        })
-        .then(result => {
-          stateSettingCallback(view, office, test_data); // <-- `test_data` here can be simply replaced by `result.data` in prod!
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    } else {
-      axios
-        .get(process.env.REACT_APP_API_URI, {
-          // mock URL, can be simply replaced by `${Real_Production_URL}/summary` in prod!
-          params: {
-            from: years[0],
-            to: years[1],
-            office: office,
-          },
-        })
-        .then(result => {
-          stateSettingCallback(view, office, test_data); // <-- `test_data` here can be simply replaced by `result.data` in prod!
-        })
-        .catch(err => {
-          console.error(err);
-        });
+                                   
+                                   */
+    const params = {
+      //Create a params object, we will always have these two values
+      from: years[0],
+      to: years[1],
+    };
+    if (office !== 'all' || office) {
+      params.office = office; //If office isn't set to all or if office does have a value, attach that to the params object
+      //(Office isn't required and can be undefined if it doesn't have a value or IS set to 'all')
     }
+    const data = []; //Create an empty data array (to match the test_data json blob)
+    axios
+      .all([
+        //Get data from both URLs
+        axios.get('https://hrf-asylum-be-b.herokuapp.com/cases/fiscalSummary', {
+          //The base API url could be defined somewhere as well :)
+          params,
+        }),
+        axios.get(
+          'https://hrf-asylum-be-b.herokuapp.com/cases/citizenshipSummary',
+          {
+            params,
+          }
+        ),
+      ])
+      .then(
+        axios.spread((res1, res2) => {
+          //When both urls are fetched, grab the response data from each
+          data.push(res1.data); //Push the first response from the /fiscalSummary endpoint into the empty array -> this endpoint sends back an object,
+          //but the way we get the data everywhere is done as if it's an array (i.e: is done as data[0], rather than just data.value)
+          data[0].citizenshipResults = res2.data; //Add the citizenship results to res1.data (because it's an object)
+          stateSettingCallback(view, office, data); //Use the newly manipulated data for this function
+        })
+      )
+      .catch(err => console.log(err));
+
+    /* NOTE:
+        Everywhere that uses this data is requires it to be an array because values are accessed by 
+        grabbing data at a certain index -> data[0]['yearResults'] in rawApiDataToPlotlyReadInfo.js (future proofing in case more data is added to the array?)
+        But we're only working with one object -- could be tricky!
+    */
   }
+
   const clearQuery = (view, office) => {
     dispatch(resetVisualizationQuery(view, office));
   };

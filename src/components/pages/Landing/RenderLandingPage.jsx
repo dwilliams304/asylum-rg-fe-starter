@@ -60,6 +60,7 @@ function RenderLandingPage(props) {
         >
           <span>View the Data</span>
         </Button>
+        {/* First ticket, Download the Data button */}
         <a
           href="https://humanrightsfirst.org/wp-content/uploads/2022/10/COW2021001887-I589Data.csv"
           target="_blank"
@@ -116,12 +117,13 @@ function RenderLandingPage(props) {
             <div className="third-data-point-container">
               <h2>6x Lower</h2>
               <h3>
-                Between fiscal year 2017 and 2020, the New York asylum office’s
+                Between fiscal year 2017 and 2020, the New York asylum office's
                 average grant rate was six times lower than the San Francisco
                 asylum office.
               </h3>
             </div>
           </div>
+          {/* First Ticket, Read More Button */}
           <a
             href="https://humanrightsfirst.org/library/uscis-records-reveal-systemic-disparities-in-asylum-decisions/"
             target="_blank"
