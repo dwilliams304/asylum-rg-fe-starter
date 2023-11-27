@@ -10,6 +10,7 @@ import {
 import 'antd/dist/antd.less';
 import { NotFoundPage } from './components/pages/NotFound';
 import { LandingPage } from './components/pages/Landing';
+import ProfilePage from './components/pages/ProfilePage';
 
 import { FooterContent, SubFooter } from './components/Layout/Footer';
 import { HeaderContent } from './components/Layout/Header';
@@ -24,6 +25,7 @@ import reducer from './state/reducers';
 import { colors } from './styles/data_vis_colors';
 
 import { Auth0Provider } from '@auth0/auth0-react';
+// import Auth0ProviderWithHistory from './auth/auth0-provider-with-history';
 
 const { primary_accent_color } = colors;
 
@@ -32,7 +34,13 @@ ReactDOM.render(
   <Router>
     <Provider store={store}>
       <React.StrictMode>
-        <Auth0Provider>
+        <Auth0Provider
+          domain="dev-7omw0ucm0fy6y3y4.us.auth0.com"
+          clientId="SZQXKrzHnrcr361eNNrzIjv1uuXHuoG8"
+          authorizationParams={{
+            redirect_uri: window.location.origin,
+          }}
+        >
           <App />
         </Auth0Provider>
       </React.StrictMode>
@@ -58,6 +66,7 @@ export function App() {
       <Switch>
         <Route path="/" exact component={LandingPage} />
         <Route path="/graphs" component={GraphsContainer} />
+        <Route path="/profile" component={ProfilePage} />
         <Route component={NotFoundPage} />
       </Switch>
       <Footer
