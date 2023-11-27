@@ -23,6 +23,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import reducer from './state/reducers';
 import { colors } from './styles/data_vis_colors';
 
+import { Auth0Provider } from '@auth0/auth0-react';
+
 const { primary_accent_color } = colors;
 
 const store = configureStore({ reducer: reducer });
@@ -30,7 +32,9 @@ ReactDOM.render(
   <Router>
     <Provider store={store}>
       <React.StrictMode>
-        <App />
+        <Auth0Provider>
+          <App />
+        </Auth0Provider>
       </React.StrictMode>
     </Provider>
   </Router>,
