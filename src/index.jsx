@@ -24,8 +24,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import reducer from './state/reducers';
 import { colors } from './styles/data_vis_colors';
 
-import { Auth0Provider } from '@auth0/auth0-react';
-// import Auth0ProviderWithHistory from './auth/auth0-provider-with-history';
+import { Auth0Provider } from '@auth0/auth0-react'; //Ticket 3, Add auth0
 
 const { primary_accent_color } = colors;
 
@@ -34,7 +33,7 @@ ReactDOM.render(
   <Router>
     <Provider store={store}>
       <React.StrictMode>
-        <Auth0Provider
+        <Auth0Provider //Set provider and needed parameters to get it working
           domain="dev-7omw0ucm0fy6y3y4.us.auth0.com"
           clientId="SZQXKrzHnrcr361eNNrzIjv1uuXHuoG8"
           authorizationParams={{
